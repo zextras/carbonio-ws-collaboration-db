@@ -1,0 +1,26 @@
+{
+  "key_prefix": [
+    {
+      "carbonio-chats/": {
+        "policy": "write"
+      }
+    }
+  ],
+  "node_prefix": [
+    {
+      "": {
+        "policy": "read"
+      }
+    }
+  ],
+  "service": [
+    {
+      "carbonio-chats-db": {
+        "policy": "write"
+      },
+      "carbonio-chats-db-sidecar-proxy": {
+        "policy": "write"
+      }
+    }
+  ]
+}

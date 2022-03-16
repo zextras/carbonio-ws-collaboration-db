@@ -1,0 +1,23 @@
+[Unit]
+Description=Carbonio chats database sidecar
+Documentation=https://docs.zextras.com/
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/consul connect envoy \
+    -token-file /etc/carbonio/chats-db/service-discover/token \
+    -admin-bind localhost:0 \
+    -sidecar-for carbonio-chats-db
+Restart=on-failure
+RestartSec=15
+User=carbonio-chats-db
+KillMode=process
+KillSignal=SIGKILL
+LimitNOFILE=65536
+TimeoutSec=120
+TimeoutStopSec=120
+
+[Install]
+WantedBy=multi-user.target

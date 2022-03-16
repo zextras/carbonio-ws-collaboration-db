@@ -1,0 +1,11 @@
+{
+  "name": "carbonio-chats-DB",
+  "description": "Carbonio chats DB sidecar",
+  "build_dir": "/tmp/",
+  "output": "artifacts",
+  "projects": [
+    {
+      "name": "package"
+    }
+  ]
+}
