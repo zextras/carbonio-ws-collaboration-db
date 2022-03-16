@@ -21,7 +21,7 @@ function build-ubuntu-artifact() {
     docker run \
       --rm --entrypoint "" \
       -v "$(pwd)":/tmp/chats-db \
-      registry.dev.zextras.com/jenkins/pacur/ubuntu-18.04:v1 /bin/bash -c 'echo $(pwd) && pacur build ubuntu /tmp/chats-db'
+      registry.dev.zextras.com/jenkins/pacur/ubuntu-18.04:v1 /bin/bash -c 'pacur build ubuntu /tmp/chats-db'
   fi
 }
 
