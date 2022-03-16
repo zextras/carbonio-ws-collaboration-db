@@ -50,7 +50,7 @@ pipeline {
           post {
             failure {
               script {
-                if (branch.equals("main")) {
+                if (env.BRANCH_NAME.equals("main")) {
                   sendFailureEmail(STAGE_NAME)
                 }
               }
@@ -74,7 +74,7 @@ pipeline {
           post {
             failure {
               script {
-                if (branch.equals("main")) {
+                if (env.BRANCH_NAME.equals("main")) {
                   sendFailureEmail(STAGE_NAME)
                 }
               }
@@ -119,7 +119,7 @@ pipeline {
       post {
         failure {
           script {
-            if (branch.equals("main")) {
+            if (env.BRANCH_NAME.equals("main")) {
               sendFailureEmail(STAGE_NAME)
             }
           }
