@@ -6,6 +6,7 @@ MAIN_SERVICE_NAME="carbonio-chats"
 DB_SERVICE_NAME="carbonio-chats-db"
 DATABASE_NAME="${DB_SERVICE_NAME}"
 DATABASE_USERNAME="${DB_SERVICE_NAME}"
+DEFAULT_DB_NAME="postgres"
 DATABASE_PASSWORD="" #defined later
 CONSUL_TOKEN_PATH="/etc/carbonio/chats-db/service-discover/token"
 
@@ -64,7 +65,7 @@ consul kv put -token-file="${CONSUL_TOKEN_PATH}" "${MAIN_SERVICE_NAME}/db-userna
 openssl rand -hex 16 | tr -d '\n' | consul kv put -token-file="${CONSUL_TOKEN_PATH}" "${MAIN_SERVICE_NAME}/db-password" -
 
 DATABASE_PASSWORD=$(consul kv get -token-file="${CONSUL_TOKEN_PATH}" "${MAIN_SERVICE_NAME}/db-password")
-psql -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -U "${ROOT_DB_USERNAME}" ${NOT_ASK_FOR_PGPASSWORD} <<EOF
+psql -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -U "${ROOT_DB_USERNAME}" -d "${DEFAULT_DB_NAME}" ${NOT_ASK_FOR_PGPASSWORD} <<EOF
 CREATE USER "${DATABASE_USERNAME}" WITH PASSWORD  '${DATABASE_PASSWORD}';
 CREATE DATABASE "${DATABASE_NAME}" OWNER "${DATABASE_USERNAME}";
 EOF
