@@ -20,21 +20,11 @@ pipeline {
       }
     }
     stage('Stashing for packaging') {
-      when {
-        anyOf {
-          branch "main"
-        }
-      }
       steps {
-        stash includes: '**', name: 'project'
+        stash includes: '**', name: 'project', useDefaultExcludes: false
       }
     }
     stage('Building packages') {
-      when {
-        anyOf {
-          branch "main"
-        }
-      }
       parallel {
         stage('Ubuntu 20') {
           agent {
@@ -68,7 +58,7 @@ pipeline {
           }
           steps {
             unstash 'project'
-            sh 'sudo pacur build rocky-8 /tmp/chats-db'
+            sh 'sudo pacur build rocky-8'
             stash includes: 'artifacts/', name: 'artifacts-rocky-8'
           }
           post {
