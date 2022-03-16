@@ -21,7 +21,9 @@ depends=(
   "carbonio-core"
   "jq"
 )
-
+backup=(
+  "etc/zextras/service-discover/carbonio-chats-db.hcl"
+)
 sources=(
   "carbonio-chats-db"
   "carbonio-chats-db.hcl"
