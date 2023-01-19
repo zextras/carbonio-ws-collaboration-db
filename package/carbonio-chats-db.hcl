@@ -5,11 +5,7 @@ services {
     interval = "5s"
   }
   connect {
-    sidecar_service {
-      proxy {
-        local_service_address = "127.78.0.101"
-      }
-    }
+    sidecar_service {}
   }
   name = "carbonio-chats-db"
   port = 5432
