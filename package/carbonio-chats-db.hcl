@@ -1,6 +1,6 @@
 services {
   check {
-    tcp      = "127.78.0.101:5432"
+    tcp      = "127.0.0.1:5432"
     timeout  = "1s"
     interval = "5s"
   }
