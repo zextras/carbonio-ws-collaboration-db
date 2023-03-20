@@ -3,6 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 pipeline {
+  parameters {
+    booleanParam defaultValue: false, description: 'Whether to upload the packages in rc repository', name: 'RC'
+  }
   options {
     skipDefaultCheckout()
     buildDiscarder(logRotator(numToKeepStr: '5'))
