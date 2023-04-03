@@ -1,5 +1,5 @@
 {
   "kind": "service-defaults",
-  "name": "carbonio-chats-db",
+  "name": "carbonio-ws-collaboration-db",
   "protocol": "tcp"
 }

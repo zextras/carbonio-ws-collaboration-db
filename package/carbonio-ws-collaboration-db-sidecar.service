@@ -1,5 +1,5 @@
 [Unit]
-Description=Carbonio chats database sidecar
+Description=Carbonio Workstream Collaboration database sidecar
 Documentation=https://docs.zextras.com/
 Requires=network-online.target
 After=network-online.target
@@ -7,12 +7,12 @@ After=network-online.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/consul connect envoy \
-    -token-file /etc/carbonio/chats-db/service-discover/token \
+    -token-file /etc/carbonio/ws-collaboration-db/service-discover/token \
     -admin-bind localhost:0 \
-    -sidecar-for carbonio-chats-db
+    -sidecar-for carbonio-ws-collaboration-db
 Restart=on-failure
 RestartSec=15
-User=carbonio-chats-db
+User=carbonio-ws-collaboration-db
 KillMode=process
 KillSignal=SIGKILL
 LimitNOFILE=65536

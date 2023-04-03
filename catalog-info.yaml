@@ -5,17 +5,18 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: carbonio-chats-db
-  title: Carbonio Chats DB service
+  name: carbonio-ws-collaboration-db
+  title: Carbonio Workstream Collaboration DB service
   description: |
-    Service containing scripts to initialise the Carbonio Chats database and it allows
-    the carbonio-chats backend to connect to the database via the service-discover.
+    Service containing scripts to initialise the Carbonio Workstream Collaboration 
+    database and it allows the carbonio-ws-collaboration backend to connect to the 
+    database via the service-discover.
   tags:
     - bash
     - envoy
     - backend
   links:
-    - url: https://github.com/Zextras/carbonio-chats-db/blob/main/README.md
+    - url: https://github.com/Zextras/carbonio-ws-collaboration-db/blob/main/README.md
       title: README
 spec:
   type: service

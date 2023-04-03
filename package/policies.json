@@ -1,8 +1,11 @@
 {
   "key_prefix": [
     {
-      "carbonio-chats/": {
+      "carbonio-ws-collaboration-db/": {
         "policy": "write"
+      },
+      "carbonio-ws-collaboration/": {
+        "policy": "read"
       }
     }
   ],
@@ -15,10 +18,10 @@
   ],
   "service": [
     {
-      "carbonio-chats-db": {
+      "carbonio-ws-collaboration-db": {
         "policy": "write"
       },
-      "carbonio-chats-db-sidecar-proxy": {
+      "carbonio-ws-collaboration-db-sidecar-proxy": {
         "policy": "write"
       }
     }

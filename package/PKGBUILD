@@ -2,12 +2,12 @@ targets=(
   "centos"
   "ubuntu"
 )
-pkgname="carbonio-chats-db"
+pkgname="carbonio-ws-collaboration-db"
 pkgver="0.1.0"
 pkgrel="1"
-pkgdesc="Carbonio chats DB sidecar"
+pkgdesc="Carbonio Workstream Collaboration DB sidecar"
 pkgdesclong=(
-  "Carbonio chats DB sidecar"
+  "Carbonio Workstream Collaboration DB sidecar"
 )
 maintainer="Zextras <packages@zextras.com>"
 url="https://zextras.com"
@@ -22,14 +22,14 @@ depends=(
   "jq"
 )
 backup=(
-  "etc/zextras/service-discover/carbonio-chats-db.hcl"
+  "etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl"
 )
 sources=(
-  "carbonio-chats-db"
-  "carbonio-chats-db.hcl"
-  "carbonio-chats-db.sh"
-  "carbonio-chats-db-bootstrap"
-  "carbonio-chats-db-sidecar.service"
+  "carbonio-ws-collaboration-db"
+  "carbonio-ws-collaboration-db.hcl"
+  "carbonio-ws-collaboration-db.sh"
+  "carbonio-ws-collaboration-db-bootstrap"
+  "carbonio-ws-collaboration-db-sidecar.service"
   "intentions.json"
   "policies.json"
   "service-protocol.json"
@@ -47,43 +47,43 @@ hashsums=(
 
 package() {
   cd "${srcdir}"
-  install -Dm 755 carbonio-chats-db "${pkgdir}/usr/bin/carbonio-chats-db"
-  install -Dm 644 carbonio-chats-db-sidecar.service "${pkgdir}/lib/systemd/system/carbonio-chats-db-sidecar.service"
-  install -Dm 644 carbonio-chats-db.hcl "${pkgdir}/etc/zextras/service-discover/carbonio-chats-db.hcl"
-  install -Dm 755 carbonio-chats-db-bootstrap "${pkgdir}/usr/bin/carbonio-chats-db-bootstrap"
-  install -Dm 644 carbonio-chats-db.sh "${pkgdir}/etc/zextras/pending-setups.d/carbonio-chats-db-setup.sh"
-  install -Dm 644 intentions.json "${pkgdir}/etc/carbonio/chats-db/service-discover/intentions.json"
-  install -Dm 644 policies.json "${pkgdir}/etc/carbonio/chats-db/service-discover/policies.json"
-  install -Dm 644 service-protocol.json "${pkgdir}/etc/carbonio/chats-db/service-discover/service-protocol.json"
+  install -Dm 755 carbonio-ws-collaboration-db "${pkgdir}/usr/bin/carbonio-ws-collaboration-db"
+  install -Dm 644 carbonio-ws-collaboration-db-sidecar.service "${pkgdir}/lib/systemd/system/carbonio-ws-collaboration-db-sidecar.service"
+  install -Dm 644 carbonio-ws-collaboration-db.hcl "${pkgdir}/etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl"
+  install -Dm 755 carbonio-ws-collaboration-db-bootstrap "${pkgdir}/usr/bin/carbonio-ws-collaboration-db-bootstrap"
+  install -Dm 644 carbonio-ws-collaboration-db.sh "${pkgdir}/etc/zextras/pending-setups.d/carbonio-ws-collaboration-db-setup.sh"
+  install -Dm 644 intentions.json "${pkgdir}/etc/carbonio/ws-collaboration-db/service-discover/intentions.json"
+  install -Dm 644 policies.json "${pkgdir}/etc/carbonio/ws-collaboration-db/service-discover/policies.json"
+  install -Dm 644 service-protocol.json "${pkgdir}/etc/carbonio/ws-collaboration-db/service-discover/service-protocol.json"
 }
 
 postinst() {
-  getent group 'carbonio-chats-db' >/dev/null ||
-    groupadd -r 'carbonio-chats-db'
-  getent passwd 'carbonio-chats-db' >/dev/null ||
-    useradd -r -M -g 'carbonio-chats-db' -s /sbin/nologin 'carbonio-chats-db'
+  getent group 'carbonio-ws-collaboration-db' >/dev/null ||
+    groupadd -r 'carbonio-ws-collaboration-db'
+  getent passwd 'carbonio-ws-collaboration-db' >/dev/null ||
+    useradd -r -M -g 'carbonio-ws-collaboration-db' -s /sbin/nologin 'carbonio-ws-collaboration-db'
 
   if [ -d /run/systemd/system ]; then
     systemctl daemon-reload >/dev/null 2>&1 || :
-    systemctl enable carbonio-chats-db-sidecar.service >/dev/null 2>&1 || :
+    systemctl enable carbonio-ws-collaboration-db-sidecar.service >/dev/null 2>&1 || :
   fi
 
-  echo "======================================================"
-  echo "Carbonio chats DB installed successfully!"
-  echo "You must run pending-setups to configure it correctly."
-  echo "======================================================"
+  echo "============================================================"
+  echo "Carbonio Workstream Collaboration DB installed successfully!"
+  echo "You must run pending-setups to configure it correctly.      "
+  echo "============================================================"
 }
 
 
 prerm() {
   if [ -d /run/systemd/system ]; then
-    systemctl --no-reload disable carbonio-chats-db-sidecar.service >/dev/null 2>&1 || :
-    systemctl stop carbonio-chats-db-sidecar.service >/dev/null 2>&1 || :
+    systemctl --no-reload disable carbonio-ws-collaboration-db-sidecar.service >/dev/null 2>&1 || :
+    systemctl stop carbonio-ws-collaboration-db-sidecar.service >/dev/null 2>&1 || :
   fi
 }
 
 postrm() {
-rm -f /etc/carbonio/chats/service-discover/token
+rm -f /etc/carbonio/ws-collaboration/service-discover/token
   if [ -d /run/systemd/system ]; then
     systemctl daemon-reload >/dev/null 2>&1 || :
   fi
