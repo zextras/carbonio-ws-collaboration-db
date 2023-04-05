@@ -37,6 +37,12 @@ pipeline {
       }
     }
     stage('Building packages') {
+      when {
+        anyOf {
+          branch "main"
+          expression { params.PLAYGROUND == true }
+        }
+      }
       parallel {
         stage('Ubuntu 20') {
           agent {
