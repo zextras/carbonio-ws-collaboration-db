@@ -6,10 +6,9 @@
 
 # This script just create credentials, write them in consul and initialize an empty schema
 
-MAIN_SERVICE_NAME="carbonio-ws-collaboration"
-DB_SERVICE_NAME="carbonio-ws-collaboration-db"
-DATABASE_NAME="${DB_SERVICE_NAME}"
-DATABASE_USERNAME="${DB_SERVICE_NAME}"
+MAIN_SERVICE_NAME="carbonio-ws-collaboration-db"
+DATABASE_NAME="${MAIN_SERVICE_NAME}"
+DATABASE_USERNAME="${MAIN_SERVICE_NAME}"
 DEFAULT_DB_NAME="postgres"
 DATABASE_PASSWORD="" #defined later
 CONSUL_TOKEN_PATH="/etc/carbonio/ws-collaboration-db/service-discover/token"
