@@ -12,8 +12,8 @@ SPDX-License-Identifier: AGPL-3.0-only
   Carbonio Workstream Collaboration sidecar for database connection  
 </div>
 
-This repository includes the means to build the carbonio-ws-collaboration-db 
-package, which is simply a consul wrapper for whichever db will be underneath.
+This purpose of this repository is to build the carbonio-ws-collaboration-db 
+package, which is a simple consul wrapper for any db that may be underneath.
 
 ***
 ## 🔧 How to Build
