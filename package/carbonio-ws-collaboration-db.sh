@@ -4,4 +4,4 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-carbonio-chats-db setup
+carbonio-ws-collaboration-db setup

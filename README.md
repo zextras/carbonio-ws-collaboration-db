@@ -4,10 +4,25 @@ SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
+<div align="center">
+  <h1>Carbonio Workstream Collaboration</h1>
+</div>
+
+<div align="center">
+  Carbonio Workstream Collaboration sidecar for database connection  
+</div>
+
+The purpose of this repository is to build the carbonio-ws-collaboration-db 
+package, which is a simple consul wrapper for any db that may be underneath.
+
 ***
+## 🔧 How to Build
 
-Carbonio Chats-CE manages a chat server-side
+To build artifacts locally, run the `build-artifacts.sh` script. You'll need
+either docker or pacur installed locally.
 
+***
+# License 📚
 Copyright (C) 2023 Zextras <https://www.zextras.com>
 
 This program is free software: you can redistribute it and/or modify it
@@ -24,15 +39,3 @@ Software Foundation](https://www.gnu.org/licenses/licenses.html
 "https://www.gnu.org/licenses/licenses.html")
 
 See [COPYING](COPYING.md) file for the project license details
-
-***
-
-# Carbonio chats DB
-
-This repository includes the means to build the carbonio-chats-db package, which
-is simply a consul wrapper for whichever db will be underneath.
-
-## 🔧 How to Build
-
-To build artifacts locally, run the `build-artifacts.sh` script. You'll need
-either docker or pacur installed locally.

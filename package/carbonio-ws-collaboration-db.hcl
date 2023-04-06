@@ -11,6 +11,6 @@ services {
       }
     }
   }
-  name = "carbonio-chats-db"
+  name = "carbonio-ws-collaboration-db"
   port = 5432
 }

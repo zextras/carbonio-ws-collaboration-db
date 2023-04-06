@@ -1,6 +1,6 @@
 {
-  "name": "carbonio-chats-DB",
-  "description": "Carbonio chats DB sidecar",
+  "name": "carbonio-ws-collaboration-db",
+  "description": "Carbonio Workstream Collaboration DB sidecar",
   "build_dir": "/tmp/",
   "output": "artifacts",
   "projects": [

@@ -20,8 +20,8 @@ function build-ubuntu-artifact() {
   else
     docker run \
       --rm --entrypoint "" \
-      -v "$(pwd)":/tmp/chats-db \
-      registry.dev.zextras.com/jenkins/pacur/ubuntu-20.04:v1 /bin/bash -c 'pacur build ubuntu /tmp/chats-db'
+      -v "$(pwd)":/tmp/ws-collaboration-db \
+      registry.dev.zextras.com/jenkins/pacur/ubuntu-20.04:v1 /bin/bash -c 'pacur build ubuntu /tmp/ws-collaboration-db'
   fi
 }
 
@@ -31,8 +31,8 @@ function build-rocky-8-artifact() {
   else
     docker run \
       --rm --entrypoint "" \
-      -v "$(pwd)":/tmp/chats-db \
-      registry.dev.zextras.com/jenkins/pacur/rocky-8:v1 /bin/bash -c 'pacur build rocky-8 /tmp/chats-db'
+      -v "$(pwd)":/tmp/ws-collaboration-db \
+      registry.dev.zextras.com/jenkins/pacur/rocky-8:v1 /bin/bash -c 'pacur build rocky-8 /tmp/ws-collaboration-db'
   fi
 }
 
