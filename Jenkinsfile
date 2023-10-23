@@ -44,16 +44,16 @@ pipeline {
         }
       }
       parallel {
-        stage('Ubuntu 20') {
+        stage('Ubuntu') {
           agent {
             node {
-              label 'pacur-agent-ubuntu-20.04-v1'
+              label 'yap-agent-ubuntu-20.04-v2'
             }
           }
           steps {
             unstash 'project'
-            sh 'sudo pacur build ubuntu-focal'
-            stash includes: 'artifacts/', name: 'artifacts-ubuntu-focal'
+            sh 'sudo yap build ubuntu .'
+            stash includes: 'artifacts/', name: 'artifacts-ubuntu'
           }
           post {
             failure {
@@ -68,16 +68,16 @@ pipeline {
             }
           }
         }
-        stage('Rocky 8') {
+        stage('RHEL') {
           agent {
             node {
-              label 'pacur-agent-rocky-8-v1'
+              label 'yap-agent-rocky-8-v2'
             }
           }
           steps {
             unstash 'project'
-            sh 'sudo pacur build rocky-8'
-            stash includes: 'artifacts/', name: 'artifacts-rocky-8'
+            sh 'sudo yap build rocky .'
+            stash includes: 'artifacts/x86_64/*.rpm', name: 'artifacts-rocky'
           }
           post {
             failure {
@@ -88,7 +88,7 @@ pipeline {
               }
             }
             always {
-              archiveArtifacts artifacts: 'artifacts/*.rpm', fingerprint: true
+              archiveArtifacts artifacts: 'artifacts/x86_64/*.rpm', fingerprint: true
             }
           }
         }
@@ -99,8 +99,8 @@ pipeline {
         expression { params.PLAYGROUND == true }
       }
       steps {
-        unstash 'artifacts-ubuntu-focal'
-        unstash 'artifacts-rocky-8'
+        unstash 'artifacts-ubuntu'
+        unstash 'artifacts-rocky'
 
         script {
           def server = Artifactory.server 'zextras-artifactory'
@@ -112,11 +112,16 @@ pipeline {
               {
                 "pattern": "artifacts/*.deb",
                 "target": "ubuntu-playground/pool/",
-                "props": "deb.distribution=focal;deb.component=main;deb.architecture=amd64"
+                "props": "deb.distribution=focal;deb.distribution=jammy;deb.component=main;deb.architecture=amd64"
               },
               {
-                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
+                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
                 "target": "centos8-playground/zextras/{1}/{1}-{2}.rpm",
+                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
+              },
+              {
+                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
+                "target": "rhel9-playground/zextras/{1}/{1}-{2}.rpm",
                 "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
               }
             ]
@@ -130,8 +135,8 @@ pipeline {
         branch "main"
       }
       steps {
-        unstash 'artifacts-ubuntu-focal'
-        unstash 'artifacts-rocky-8'
+        unstash 'artifacts-ubuntu'
+        unstash 'artifacts-rocky'
 
         script {
           def server = Artifactory.server 'zextras-artifactory'
@@ -143,11 +148,16 @@ pipeline {
               {
                 "pattern": "artifacts/*.deb",
                 "target": "ubuntu-devel/pool/",
-                "props": "deb.distribution=focal;deb.component=main;deb.architecture=amd64"
+                "props": "deb.distribution=focal;deb.distribution=jammy;deb.component=main;deb.architecture=amd64"
               },
               {
-                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
+                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
                 "target": "centos8-devel/zextras/{1}/{1}-{2}.rpm",
+                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
+              },
+              {
+                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
+                "target": "rhel9-devel/zextras/{1}/{1}-{2}.rpm",
                 "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
               }
             ]
@@ -190,7 +200,7 @@ pipeline {
               {
                 "pattern": "artifacts/*.deb",
                 "target": "ubuntu-rc/pool/",
-                "props": "deb.distribution=focal;deb.component=main;deb.architecture=amd64"
+                "props": "deb.distribution=focal;deb.distribution=jammy;deb.component=main;deb.architecture=amd64"
               }
             ]
           }'''
@@ -211,13 +221,13 @@ pipeline {
           displayName: 'Ubuntu Promotion to Release'
           server.publishBuildInfo buildInfo
 
-          //rocky8
+          //rhel8
           buildInfo = Artifactory.newBuildInfo()
           buildInfo.name += "-centos8"
           uploadSpec = '''{
             "files": [
               {
-                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
+                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
                 "target": "centos8-rc/zextras/{1}/{1}-{2}.rpm",
                 "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
               }
@@ -238,6 +248,35 @@ pipeline {
           Artifactory.addInteractivePromotion server: server,
           promotionConfig: config,
           displayName: 'RHEL8 Promotion to Release'
+          server.publishBuildInfo buildInfo
+
+          //rhel9
+          buildInfo = Artifactory.newBuildInfo()
+          buildInfo.name += "-rhel9"
+          uploadSpec = '''{
+            "files": [
+              {
+                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
+                "target": "rhel9-rc/zextras/{1}/{1}-{2}.rpm",
+                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
+              }
+            ]
+          }'''
+          server.upload spec: uploadSpec, buildInfo: buildInfo, failNoOp: false
+          config = [
+             'buildName'          : buildInfo.name,
+             'buildNumber'        : buildInfo.number,
+             'sourceRepo'         : 'rhel9-rc',
+             'targetRepo'         : 'rhel9-rc',
+             'comment'            : 'Do not change anything! Just press the button',
+             'status'             : 'Released',
+             'includeDependencies': false,
+             'copy'               : true,
+             'failFast'           : true
+          ]
+          Artifactory.addInteractivePromotion server: server,
+          promotionConfig: config,
+          displayName: 'RHEL9 Promotion to Release'
           server.publishBuildInfo buildInfo
         }
       }
