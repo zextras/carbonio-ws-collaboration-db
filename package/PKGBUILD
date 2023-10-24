@@ -1,19 +1,12 @@
-targets=(
-  "centos"
-  "ubuntu"
-)
 pkgname="carbonio-ws-collaboration-db"
 pkgver="0.1.0"
 pkgrel="1"
 pkgdesc="Carbonio Workstream Collaboration DB sidecar"
-pkgdesclong=(
-  "Carbonio Workstream Collaboration DB sidecar"
-)
 maintainer="Zextras <packages@zextras.com>"
 url="https://zextras.com"
 section="mail"
 priority="optional"
-arch="amd64"
+arch=('x86_64')
 license=("spdx:AGPL-3.0-only")
 depends=(
   "service-discover"
@@ -24,7 +17,7 @@ depends=(
 backup=(
   "etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl"
 )
-sources=(
+source=(
   "carbonio-ws-collaboration-db"
   "carbonio-ws-collaboration-db.hcl"
   "carbonio-ws-collaboration-db.sh"
@@ -34,16 +27,14 @@ sources=(
   "policies.json"
   "service-protocol.json"
 )
-hashsums=(
-  "72692652bbb341b6f35a81171063b2bbf9780b60ae91c266575aaa4dde255ac7"
-  "f5174863bfbefd426ef67ee2c545cdbe534d8a89bde94d7cdc891895935adf77"
-  "2c175f681ebb7cbac3f8f034ffe08d99d59b8a68824ebcfce1877c22614efd66"
-  "3cd08503c4acb0cddd8104e8c4cccadb9837fa7028c4c2dd85841c34f327f7fb"
-  "2e37b88a45d0b99cf86e7bd17721f030c23c2c692ab648b6a645f05725dbf642"
-  "adf29d0330cd8745c81a03eb27feea87f13a11f09e9cba2bebc10e0bb9bd4236"
-  "9bedfb38742c72034f015aee3f1e7bdb734cd5d6e0003b109a8d6fead4962a8c"
-  "d0f4019f14ff13fe5d394e9945c6679c1098f532c8bffd41b129e1a804947ac1"
-)
+sha256sums=('72692652bbb341b6f35a81171063b2bbf9780b60ae91c266575aaa4dde255ac7'
+  'f5174863bfbefd426ef67ee2c545cdbe534d8a89bde94d7cdc891895935adf77'
+  '2c175f681ebb7cbac3f8f034ffe08d99d59b8a68824ebcfce1877c22614efd66'
+  '3cd08503c4acb0cddd8104e8c4cccadb9837fa7028c4c2dd85841c34f327f7fb'
+  '2e37b88a45d0b99cf86e7bd17721f030c23c2c692ab648b6a645f05725dbf642'
+  'adf29d0330cd8745c81a03eb27feea87f13a11f09e9cba2bebc10e0bb9bd4236'
+  '9bedfb38742c72034f015aee3f1e7bdb734cd5d6e0003b109a8d6fead4962a8c'
+  'd0f4019f14ff13fe5d394e9945c6679c1098f532c8bffd41b129e1a804947ac1')
 
 package() {
   cd "${srcdir}"
@@ -74,7 +65,6 @@ postinst() {
   echo "============================================================"
 }
 
-
 prerm() {
   if [ -d /run/systemd/system ]; then
     systemctl --no-reload disable carbonio-ws-collaboration-db-sidecar.service >/dev/null 2>&1 || :
@@ -83,7 +73,7 @@ prerm() {
 }
 
 postrm() {
-rm -f /etc/carbonio/ws-collaboration/service-discover/token
+  rm -f /etc/carbonio/ws-collaboration/service-discover/token
   if [ -d /run/systemd/system ]; then
     systemctl daemon-reload >/dev/null 2>&1 || :
   fi
