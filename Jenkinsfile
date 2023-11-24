@@ -183,8 +183,8 @@ pipeline {
         }
       }
       steps {
-        unstash 'artifacts-ubuntu-focal'
-        unstash 'artifacts-rocky-8'
+        unstash 'artifacts-ubuntu'
+        unstash 'artifacts-rocky'
 
         script {
           def server = Artifactory.server 'zextras-artifactory'
