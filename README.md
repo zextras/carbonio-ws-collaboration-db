@@ -101,15 +101,13 @@ Software Foundation](https://www.gnu.org/licenses/licenses.html
 
 See [COPYING](COPYING.md) file for the project license details
 
-## Copyright notice
+## Copyright and Licensing notices
 
-All non-software material (such as, for example, names, images, logos, sounds)
-is owned by Zextras
-s.r.l. and is licensed
-under [CC-BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/).
-
-Where not specified, all source files owned by Zextras s.r.l. are licensed under
-AGPL-3.0-only
+All non-software material (such as, for example, names, images, logos,
+sounds) is owned by Zextras s.r.l. and is licensed under CC-BY-NC-SA
+(<https://creativecommons.org/licenses/by-nc-sa/4.0/>).
+Where not specified, all source files owned by Zextras s.r.l. are licensed
+under AGPL-3.0-only.
 
 [contributors-badge]: https://img.shields.io/github/contributors/zextras/carbonio-user-management-sdk "Contributors"
 
