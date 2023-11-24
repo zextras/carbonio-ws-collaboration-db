@@ -1,15 +1,16 @@
-<h1 align="center">Carbonio Workstream Collaboration DB</h1>
+<h1 align="center">Carbonio Workstream Collaboration DB 🚀</h1>
 
-Carbonio Workstream Collaboration sidecar for database connection
-
-The purpose of this repository is to build the carbonio-ws-collaboration-db
-package, which is a simple consul wrapper for any db that may be underneath.
+<div align="center">
+Service sidecar used by Zextras Carbonio Workstream Collaboration to
+communicate with a centralized database
 
 [![Contributors][contributors-badge]][contributors]
 [![Activity][activity-badge]][activity]
 [![License][license-badge]](COPYING)
 [![Project][project-badge]][project]
 [![Twitter][twitter-badge]][twitter]
+
+</div>
 
 ***
 
