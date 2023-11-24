@@ -14,15 +14,15 @@ function build-all-artifacts() {
 function build-ubuntu-artifact() {
   docker run \
     --rm --entrypoint "" \
-    -v "$(pwd)":/tmp/ws-collaboration-db \
-    docker.io/m0rf30/yap-ubuntu-focal /bin/bash -c 'yap build ubuntu /tmp/ws-collaboration-db'
+    -v "$(pwd)":/artifacts \
+    docker.io/m0rf30/yap-ubuntu-focal /bin/bash -c 'yap build ubuntu /artifacts'
 }
 
 function build-rocky-8-artifact() {
   docker run \
     --rm --entrypoint "" \
-    -v "$(pwd)":/tmp/ws-collaboration-db \
-    docker.io/m0rf30/yap-rocky-8 /bin/bash -c 'yap prepare rocky-8; yap build rocky-8 /tmp/ws-collaboration-db'
+    -v "$(pwd)":/artifacts \
+    docker.io/m0rf30/yap-rocky-8 /bin/bash -c 'yap build rocky-8 /artifacts'
 }
 
 function print-banner() {
