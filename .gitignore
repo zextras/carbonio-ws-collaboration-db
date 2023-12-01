@@ -22,6 +22,7 @@ dist/
 
 # Package files
 *.jar
+x86_64/
 
 # Maven
 target/
@@ -53,4 +54,3 @@ Thumbs.db
 *.wmv
 *.rpm
 *.deb
-
