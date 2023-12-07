@@ -5,35 +5,24 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 function build-all-artifacts() {
-  no_docker=$1
-
   build-ubuntu-artifact
   build-rocky-8-artifact
 
   print-banner "success"
-
 }
 
 function build-ubuntu-artifact() {
-  if [ "$no_docker" = true ]; then
-    pacur build ubuntu
-  else
-    docker run \
-      --rm --entrypoint "" \
-      -v "$(pwd)":/tmp/ws-collaboration-db \
-      registry.dev.zextras.com/jenkins/pacur/ubuntu-20.04:v1 /bin/bash -c 'pacur build ubuntu /tmp/ws-collaboration-db'
-  fi
+  docker run \
+    --rm --entrypoint "" \
+    -v "$(pwd)":/artifacts \
+    docker.io/m0rf30/yap-ubuntu-focal /bin/bash -c 'yap build ubuntu /artifacts'
 }
 
 function build-rocky-8-artifact() {
-  if [ "$no_docker" = true ]; then
-    pacur build rocky-8
-  else
-    docker run \
-      --rm --entrypoint "" \
-      -v "$(pwd)":/tmp/ws-collaboration-db \
-      registry.dev.zextras.com/jenkins/pacur/rocky-8:v1 /bin/bash -c 'pacur build rocky-8 /tmp/ws-collaboration-db'
-  fi
+  docker run \
+    --rm --entrypoint "" \
+    -v "$(pwd)":/artifacts \
+    docker.io/m0rf30/yap-rocky-8 /bin/bash -c 'yap build rocky-8 /artifacts'
 }
 
 function print-banner() {
@@ -64,8 +53,8 @@ function print-banner() {
   done
   echo ""
   echo "$border_string"
-  echo "****  $banner_string  ****" | tr a-z A-Z
+  echo "****  $banner_string  ****" | tr '[:lower:]' '[:upper:]'
   echo "$border_string"
 }
 
-build-all-artifacts "$1"
+build-all-artifacts
