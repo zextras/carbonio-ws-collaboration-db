@@ -1,6 +1,6 @@
 pkgname="carbonio-ws-collaboration-db"
-pkgver="0.2.1"
-pkgrel="2"
+pkgver="0.2.2"
+pkgrel="1"
 pkgdesc="Carbonio Workstream Collaboration DB sidecar"
 maintainer="Zextras <packages@zextras.com>"
 url="https://zextras.com"
@@ -30,7 +30,7 @@ source=(
 sha256sums=('72692652bbb341b6f35a81171063b2bbf9780b60ae91c266575aaa4dde255ac7'
   '59a74fcfbbfaf4628271bfa4d4e76c46d508f7b21d3a79d46ad51f96b8083695'
   '2c175f681ebb7cbac3f8f034ffe08d99d59b8a68824ebcfce1877c22614efd66'
-  'b243c75d1e50b5b163602f8e4f034265be8576470548fac1f5c22fcb386e69db'
+  'cbcdea3b53ed934a0e4280be9ab3434118a8c096c81a9cc68f007ff59f68520f'
   '2e37b88a45d0b99cf86e7bd17721f030c23c2c692ab648b6a645f05725dbf642'
   '87b5d43d577bd805a74aa5f38ded4cc5a755ba35ab8266c8f3b60f3a091a07c3'
   '9bedfb38742c72034f015aee3f1e7bdb734cd5d6e0003b109a8d6fead4962a8c'
