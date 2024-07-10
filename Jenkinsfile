@@ -5,9 +5,6 @@
 pipeline {
   parameters {
     booleanParam defaultValue: false,
-    description: 'Whether to upload the packages in rc repository',
-    name: 'RC'
-    booleanParam defaultValue: false,
     description: 'Whether to upload the packages in playground repository',
     name: 'PLAYGROUND'
   }
@@ -37,12 +34,6 @@ pipeline {
       }
     }
     stage('Building packages') {
-      when {
-        anyOf {
-          branch "main"
-          expression { params.PLAYGROUND == true }
-        }
-      }
       parallel {
         stage('Ubuntu') {
           agent {
@@ -52,13 +43,20 @@ pipeline {
           }
           steps {
             unstash 'project'
-            sh 'sudo yap build ubuntu .'
+            script {
+              if (BRANCH_NAME == 'devel') {
+                def timestamp = new Date().format('yyyyMMddHHmmss')
+                sh "sudo yap build ubuntu . -r ${timestamp}"
+              } else {
+                sh 'sudo yap build ubuntu .'
+              }
+            }
             stash includes: 'artifacts/', name: 'artifacts-ubuntu'
           }
           post {
             failure {
               script {
-                if (env.BRANCH_NAME.equals("main")) {
+                if ("main".equals(BRANCH_NAME) || "devel".equals(BRANCH_NAME)) {
                   sendFailureEmail(STAGE_NAME)
                 }
               }
@@ -76,13 +74,20 @@ pipeline {
           }
           steps {
             unstash 'project'
-            sh 'sudo yap build rocky .'
+            script {
+              if (BRANCH_NAME == 'devel') {
+                def timestamp = new Date().format('yyyyMMddHHmmss')
+                sh "sudo yap build rocky . -r ${timestamp}"
+              } else {
+                sh 'sudo yap build rocky .'
+              }
+            }
             stash includes: 'artifacts/x86_64/*.rpm', name: 'artifacts-rocky'
           }
           post {
             failure {
               script {
-                if (env.BRANCH_NAME.equals("main")) {
+                if ("main".equals(BRANCH_NAME) || "devel".equals(BRANCH_NAME)) {
                   sendFailureEmail(STAGE_NAME)
                 }
               }
@@ -132,7 +137,7 @@ pipeline {
     }
     stage('Upload To Devel') {
       when {
-        branch "main"
+        branch 'devel'
       }
       steps {
         unstash 'artifacts-ubuntu'
@@ -168,19 +173,14 @@ pipeline {
       post {
         failure {
           script {
-            if (env.BRANCH_NAME.equals("main")) {
-              sendFailureEmail(STAGE_NAME)
-            }
+            sendFailureEmail(STAGE_NAME)
           }
         }
       }
     }
-    stage('Upload To Release') {
+    stage('Upload & Promotion Config') {
       when {
-        allOf {
-          branch "main"
-          expression { params.RC == true }
-        }
+        buildingTag()
       }
       steps {
         unstash 'artifacts-ubuntu'
@@ -283,9 +283,7 @@ pipeline {
       post {
         failure {
           script {
-            if (env.BRANCH_NAME.equals("main")) {
-              sendFailureEmail(STAGE_NAME)
-            }
+            sendFailureEmail(STAGE_NAME)
           }
         }
       }
