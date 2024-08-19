@@ -9,10 +9,10 @@ priority="optional"
 arch=('x86_64')
 license=("AGPL-3.0-only")
 depends=(
-  "service-discover"
-  "pending-setups"
   "carbonio-core"
   "jq"
+  "pending-setups"
+  "service-discover"
 )
 backup=(
   "etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl"
