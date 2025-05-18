@@ -3,11 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 pipeline {
-  parameters {
-    booleanParam defaultValue: false,
-    description: 'Whether to upload the packages in playground repository',
-    name: 'PLAYGROUND'
-  }
   options {
     skipDefaultCheckout()
     buildDiscarder(logRotator(numToKeepStr: '5'))
@@ -15,7 +10,7 @@ pipeline {
   }
   agent {
     node {
-      label 'openjdk11-agent-v1'
+      label 'base'
     }
   }
   environment {
@@ -41,20 +36,22 @@ pipeline {
         stage('Ubuntu') {
           agent {
             node {
-              label 'yap-agent-ubuntu-20.04-v2'
+              label 'yap-ubuntu-20-v1'
             }
           }
           steps {
-            unstash 'project'
-            script {
-              if (BRANCH_NAME == 'devel') {
-                def timestamp = new Date().format('yyyyMMddHHmmss')
-                sh "sudo yap build ubuntu . -r ${timestamp}"
-              } else {
-                sh 'sudo yap build ubuntu .'
+            container('yap') {
+              unstash 'project'
+              script {
+                if (BRANCH_NAME == 'devel') {
+                  def timestamp = new Date().format('yyyyMMddHHmmss')
+                  sh "sudo yap build ubuntu . -r ${timestamp}"
+                } else {
+                  sh 'sudo yap build ubuntu .'
+                }
               }
+              stash includes: 'artifacts/', name: 'artifacts-ubuntu'
             }
-            stash includes: 'artifacts/', name: 'artifacts-ubuntu'
           }
           post {
             failure {
@@ -72,20 +69,22 @@ pipeline {
         stage('RHEL') {
           agent {
             node {
-              label 'yap-agent-rocky-8-v2'
+              label 'yap-rocky-8-v1'
             }
           }
           steps {
-            unstash 'project'
-            script {
-              if (BRANCH_NAME == 'devel') {
-                def timestamp = new Date().format('yyyyMMddHHmmss')
-                sh "sudo yap build rocky . -r ${timestamp}"
-              } else {
-                sh 'sudo yap build rocky .'
+            container('yap') {
+              unstash 'project'
+              script {
+                if (BRANCH_NAME == 'devel') {
+                  def timestamp = new Date().format('yyyyMMddHHmmss')
+                  sh "sudo yap build rocky . -r ${timestamp}"
+                } else {
+                  sh 'sudo yap build rocky .'
+                }
               }
+              stash includes: 'artifacts/*.rpm', name: 'artifacts-rocky'
             }
-            stash includes: 'artifacts/x86_64/*.rpm', name: 'artifacts-rocky'
           }
           post {
             failure {
@@ -96,45 +95,9 @@ pipeline {
               }
             }
             always {
-              archiveArtifacts artifacts: 'artifacts/x86_64/*.rpm', fingerprint: true
+              archiveArtifacts artifacts: 'artifacts/*.rpm', fingerprint: true
             }
           }
-        }
-      }
-    }
-    stage('Upload To Playground') {
-      when {
-        expression { params.PLAYGROUND == true }
-      }
-      steps {
-        unstash 'artifacts-ubuntu'
-        unstash 'artifacts-rocky'
-
-        script {
-          def server = Artifactory.server 'zextras-artifactory'
-          def buildInfo
-          def uploadSpec
-          buildInfo = Artifactory.newBuildInfo()
-          uploadSpec = """{
-            "files": [
-              {
-                "pattern": "artifacts/*.deb",
-                "target": "ubuntu-playground/pool/",
-                "props": "deb.distribution=focal;deb.distribution=jammy;deb.distribution=noble;deb.component=main;deb.architecture=amd64;vcs.revision=${env.GIT_COMMIT}"
-              },
-              {
-                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
-                "target": "centos8-playground/zextras/{1}/{1}-{2}.rpm",
-                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
-              },
-              {
-                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
-                "target": "rhel9-playground/zextras/{1}/{1}-{2}.rpm",
-                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
-              }
-            ]
-          }"""
-          server.upload spec: uploadSpec, buildInfo: buildInfo, failNoOp: false
         }
       }
     }
@@ -159,12 +122,12 @@ pipeline {
                 "props": "deb.distribution=focal;deb.distribution=jammy;deb.distribution=noble;deb.component=main;deb.architecture=amd64;vcs.revision=${env.GIT_COMMIT}"
               },
               {
-                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
+                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
                 "target": "centos8-devel/zextras/{1}/{1}-{2}.rpm",
                 "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
               },
               {
-                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
+                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
                 "target": "rhel9-devel/zextras/{1}/{1}-{2}.rpm",
                 "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
               }
@@ -181,7 +144,7 @@ pipeline {
         }
       }
     }
-    stage('Upload & Promotion Config') {
+    stage('Upload To Release') {
       when {
         buildingTag()
       }
@@ -230,7 +193,7 @@ pipeline {
           uploadSpec = """{
             "files": [
               {
-                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
+                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
                 "target": "centos8-rc/zextras/{1}/{1}-{2}.rpm",
                 "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
               }
@@ -241,7 +204,7 @@ pipeline {
              'buildName'          : buildInfo.name,
              'buildNumber'        : buildInfo.number,
              'sourceRepo'         : 'centos8-rc',
-             'targetRepo'         : 'centos8-rc',
+             'targetRepo'         : 'centos8-release',
              'comment'            : 'Do not change anything! Just press the button',
              'status'             : 'Released',
              'includeDependencies': false,
@@ -259,7 +222,7 @@ pipeline {
           uploadSpec = """{
             "files": [
               {
-                "pattern": "artifacts/x86_64/(carbonio-ws-collaboration-db)-(*).rpm",
+                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
                 "target": "rhel9-rc/zextras/{1}/{1}-{2}.rpm",
                 "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
               }
@@ -270,7 +233,7 @@ pipeline {
              'buildName'          : buildInfo.name,
              'buildNumber'        : buildInfo.number,
              'sourceRepo'         : 'rhel9-rc',
-             'targetRepo'         : 'rhel9-rc',
+             'targetRepo'         : 'rhel9-release',
              'comment'            : 'Do not change anything! Just press the button',
              'status'             : 'Released',
              'includeDependencies': false,
