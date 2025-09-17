@@ -2,254 +2,93 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+library(
+    identifier: 'jenkins-packages-build-library@1.0.3',
+    retriever: modernSCM([
+        $class: 'GitSCMSource',
+        remote: 'git@github.com:zextras/jenkins-packages-build-library.git',
+        credentialsId: 'jenkins-integration-with-github-account'
+    ])
+)
+
 pipeline {
-  options {
-    skipDefaultCheckout()
-    buildDiscarder(logRotator(numToKeepStr: '5'))
-    timeout(time: 1, unit: 'HOURS')
-  }
   agent {
     node {
       label 'base'
     }
   }
+
   environment {
     NETWORK_OPTS = '--network ci_agent'
     FAILURE_EMAIL_RECIPIENTS='smokybeans@zextras.com'
   }
+
+  options {
+    skipDefaultCheckout()
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+    timeout(time: 1, unit: 'HOURS')
+    parallelsAlwaysFailFast()
+  }
+
+  parameters {
+    booleanParam defaultValue: false,
+      description: 'Whether to upload the packages in playground repository',
+      name: 'PLAYGROUND'
+  }
+
+  tools {
+    jfrog 'jfrog-cli'
+  }
+  
   stages {
     stage('Build setup') {
       steps {
         checkout scm
         script {
-          env.GIT_COMMIT = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+          gitMetadata()
         }
       }
     }
-    stage('Stashing for packaging') {
-      steps {
-        stash includes: '**', name: 'project', useDefaultExcludes: false
-      }
-    }
-    stage('Building packages') {
-      parallel {
-        stage('Ubuntu') {
-          agent {
-            node {
-              label 'yap-ubuntu-20-v1'
-            }
-          }
-          steps {
-            container('yap') {
-              unstash 'project'
-              script {
-                if (BRANCH_NAME == 'devel') {
-                  def timestamp = new Date().format('yyyyMMddHHmmss')
-                  sh "sudo yap build ubuntu . -r ${timestamp}"
-                } else {
-                  sh 'sudo yap build ubuntu .'
-                }
-              }
-              stash includes: 'artifacts/', name: 'artifacts-ubuntu'
-            }
-          }
-          post {
-            failure {
-              script {
-                if ("main".equals(BRANCH_NAME) || "devel".equals(BRANCH_NAME)) {
-                  sendFailureEmail(STAGE_NAME)
-                }
-              }
-            }
-            always {
-              archiveArtifacts artifacts: 'artifacts/*.deb', fingerprint: true
-            }
-          }
-        }
-        stage('RHEL') {
-          agent {
-            node {
-              label 'yap-rocky-8-v1'
-            }
-          }
-          steps {
-            container('yap') {
-              unstash 'project'
-              script {
-                if (BRANCH_NAME == 'devel') {
-                  def timestamp = new Date().format('yyyyMMddHHmmss')
-                  sh "sudo yap build rocky . -r ${timestamp}"
-                } else {
-                  sh 'sudo yap build rocky .'
-                }
-              }
-              stash includes: 'artifacts/*.rpm', name: 'artifacts-rocky'
-            }
-          }
-          post {
-            failure {
-              script {
-                if ("main".equals(BRANCH_NAME) || "devel".equals(BRANCH_NAME)) {
-                  sendFailureEmail(STAGE_NAME)
-                }
-              }
-            }
-            always {
-              archiveArtifacts artifacts: 'artifacts/*.rpm', fingerprint: true
-            }
-          }
-        }
-      }
-    }
-    stage('Upload To Devel') {
-      when {
-        branch 'devel'
-      }
-      steps {
-        unstash 'artifacts-ubuntu'
-        unstash 'artifacts-rocky'
 
-        script {
-          def server = Artifactory.server 'zextras-artifactory'
-          def buildInfo
-          def uploadSpec
-          buildInfo = Artifactory.newBuildInfo()
-          uploadSpec = """{
-            "files": [
-              {
-                "pattern": "artifacts/*.deb",
-                "target": "ubuntu-devel/pool/",
-                "props": "deb.distribution=focal;deb.distribution=jammy;deb.distribution=noble;deb.component=main;deb.architecture=amd64;vcs.revision=${env.GIT_COMMIT}"
-              },
-              {
-                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
-                "target": "centos8-devel/zextras/{1}/{1}-{2}.rpm",
-                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
-              },
-              {
-                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
-                "target": "rhel9-devel/zextras/{1}/{1}-{2}.rpm",
-                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
-              }
-            ]
-          }"""
-          server.upload spec: uploadSpec, buildInfo: buildInfo, failNoOp: false
-        }
+    // stage('Stashing for packaging') {
+    //   steps {
+    //     stash includes: '**', name: 'project', useDefaultExcludes: false
+    //   }
+    // }
+
+    stage('Build deb/rpm') {
+      steps {
+        echo 'Building deb/rpm packages'
+        buildStage([
+          rockySinglePkg: true,
+          ubuntuSinglePkg: true,
+        ])
       }
       post {
         failure {
           script {
-            sendFailureEmail(STAGE_NAME)
+            if ("main".equals(BRANCH_NAME) || "devel".equals(BRANCH_NAME)) {
+              sendFailureEmail(STAGE_NAME)
+            }
           }
         }
       }
     }
-    stage('Upload To Release') {
-      when {
-        buildingTag()
-      }
+
+    stage('Upload artifacts') {
       steps {
-        unstash 'artifacts-ubuntu'
-        unstash 'artifacts-rocky'
-
-        script {
-          def server = Artifactory.server 'zextras-artifactory'
-          def buildInfo
-          def uploadSpec
-          def config
-
-          //ubuntu
-          buildInfo = Artifactory.newBuildInfo()
-          buildInfo.name += '-ubuntu'
-          uploadSpec = """{
-            "files": [
-              {
-                "pattern": "artifacts/*.deb",
-                "target": "ubuntu-rc/pool/",
-                "props": "deb.distribution=focal;deb.distribution=jammy;deb.distribution=noble;deb.component=main;deb.architecture=amd64;vcs.revision=${env.GIT_COMMIT}"
-              }
-            ]
-          }"""
-          server.upload spec: uploadSpec, buildInfo: buildInfo, failNoOp: false
-          config = [
-             'buildName'          : buildInfo.name,
-             'buildNumber'        : buildInfo.number,
-             'sourceRepo'         : 'ubuntu-rc',
-             'targetRepo'         : 'ubuntu-release',
-             'comment'            : 'Do not change anything! Just press the button',
-             'status'             : 'Released',
-             'includeDependencies': false,
-             'copy'               : true,
-             'failFast'           : true
-          ]
-          Artifactory.addInteractivePromotion server: server,
-          promotionConfig: config,
-          displayName: 'Ubuntu Promotion to Release'
-          server.publishBuildInfo buildInfo
-
-          //rhel8
-          buildInfo = Artifactory.newBuildInfo()
-          buildInfo.name += "-centos8"
-          uploadSpec = """{
-            "files": [
-              {
-                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
-                "target": "centos8-rc/zextras/{1}/{1}-{2}.rpm",
-                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
-              }
-            ]
-          }"""
-          server.upload spec: uploadSpec, buildInfo: buildInfo, failNoOp: false
-          config = [
-             'buildName'          : buildInfo.name,
-             'buildNumber'        : buildInfo.number,
-             'sourceRepo'         : 'centos8-rc',
-             'targetRepo'         : 'centos8-release',
-             'comment'            : 'Do not change anything! Just press the button',
-             'status'             : 'Released',
-             'includeDependencies': false,
-             'copy'               : true,
-             'failFast'           : true
-          ]
-          Artifactory.addInteractivePromotion server: server,
-          promotionConfig: config,
-          displayName: 'RHEL8 Promotion to Release'
-          server.publishBuildInfo buildInfo
-
-          //rhel9
-          buildInfo = Artifactory.newBuildInfo()
-          buildInfo.name += "-rhel9"
-          uploadSpec = """{
-            "files": [
-              {
-                "pattern": "artifacts/(carbonio-ws-collaboration-db)-(*).rpm",
-                "target": "rhel9-rc/zextras/{1}/{1}-{2}.rpm",
-                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
-              }
-            ]
-          }"""
-          server.upload spec: uploadSpec, buildInfo: buildInfo, failNoOp: false
-          config = [
-             'buildName'          : buildInfo.name,
-             'buildNumber'        : buildInfo.number,
-             'sourceRepo'         : 'rhel9-rc',
-             'targetRepo'         : 'rhel9-release',
-             'comment'            : 'Do not change anything! Just press the button',
-             'status'             : 'Released',
-             'includeDependencies': false,
-             'copy'               : true,
-             'failFast'           : true
-          ]
-          Artifactory.addInteractivePromotion server: server,
-          promotionConfig: config,
-          displayName: 'RHEL9 Promotion to Release'
-          server.publishBuildInfo buildInfo
-        }
+        uploadStage(
+          packages: yapHelper.getPackageNames(),
+          rockySinglePkg: true,
+          ubuntuSinglePkg: true,
+        )
       }
       post {
         failure {
           script {
-            sendFailureEmail(STAGE_NAME)
+            if ("main".equals(BRANCH_NAME) || "devel".equals(BRANCH_NAME)) {
+              sendFailureEmail(STAGE_NAME)
+            }
           }
         }
       }
