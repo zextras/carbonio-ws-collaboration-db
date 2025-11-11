@@ -18,9 +18,9 @@ backup=(
   "etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl"
 )
 source=(
+  "111-carbonio-ws-collaboration-db-setup.sh"
   "carbonio-ws-collaboration-db"
   "carbonio-ws-collaboration-db.hcl"
-  "carbonio-ws-collaboration-db.sh"
   "carbonio-ws-collaboration-db-bootstrap"
   "carbonio-ws-collaboration-db-sidecar.service"
   "intentions.json"
@@ -28,9 +28,9 @@ source=(
   "service-protocol.json"
 )
 sha256sums=(
+  '2c175f681ebb7cbac3f8f034ffe08d99d59b8a68824ebcfce1877c22614efd66'
   '72692652bbb341b6f35a81171063b2bbf9780b60ae91c266575aaa4dde255ac7'
   '59a74fcfbbfaf4628271bfa4d4e76c46d508f7b21d3a79d46ad51f96b8083695'
-  '2c175f681ebb7cbac3f8f034ffe08d99d59b8a68824ebcfce1877c22614efd66'
   'cbcdea3b53ed934a0e4280be9ab3434118a8c096c81a9cc68f007ff59f68520f'
   '976e5449621ff34541757566c1c5c400175cb401623f39507fc2ed1b4dc74c28'
   '87b5d43d577bd805a74aa5f38ded4cc5a755ba35ab8266c8f3b60f3a091a07c3'
@@ -40,11 +40,11 @@ sha256sums=(
 
 package() {
   cd "${srcdir}"
+  install -Dm 644 111-carbonio-ws-collaboration-db-setup.sh "${pkgdir}/etc/zextras/pending-setups.d/111-carbonio-ws-collaboration-db-setup.sh"
   install -Dm 755 carbonio-ws-collaboration-db "${pkgdir}/usr/bin/carbonio-ws-collaboration-db"
   install -Dm 644 carbonio-ws-collaboration-db-sidecar.service "${pkgdir}/lib/systemd/system/carbonio-ws-collaboration-db-sidecar.service"
   install -Dm 644 carbonio-ws-collaboration-db.hcl "${pkgdir}/etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl"
   install -Dm 755 carbonio-ws-collaboration-db-bootstrap "${pkgdir}/usr/bin/carbonio-ws-collaboration-db-bootstrap"
-  install -Dm 644 carbonio-ws-collaboration-db.sh "${pkgdir}/etc/zextras/pending-setups.d/carbonio-ws-collaboration-db-setup.sh"
   install -Dm 644 intentions.json "${pkgdir}/etc/carbonio/ws-collaboration-db/service-discover/intentions.json"
   install -Dm 644 policies.json "${pkgdir}/etc/carbonio/ws-collaboration-db/service-discover/policies.json"
   install -Dm 644 service-protocol.json "${pkgdir}/etc/carbonio/ws-collaboration-db/service-discover/service-protocol.json"
