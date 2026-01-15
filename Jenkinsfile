@@ -1,106 +1,136 @@
-// SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
+// SPDX-FileCopyrightText: 2025 Zextras <https://www.zextras.com>
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
 library(
-  identifier: 'jenkins-lib-common@1.1.2',
-  retriever: modernSCM([
-    $class: 'GitSCMSource',
-    credentialsId: 'jenkins-integration-with-github-account',
-    remote: 'git@github.com:zextras/jenkins-lib-common.git'
-  ])
+    identifier: 'jenkins-dt3-lib@v1.2.0',
+    retriever: modernSCM([
+        $class: 'GitSCMSource',
+        remote: 'git@github.com:zextras/jenkins-dt3-lib.git',
+        credentialsId: 'jenkins-integration-with-github-account'
+    ])
+)
+
+library(
+    identifier: 'jenkins-lib-common@1.1.2',
+    retriever: modernSCM([
+        $class: 'GitSCMSource',
+        credentialsId: 'jenkins-integration-with-github-account',
+        remote: 'git@github.com:zextras/jenkins-lib-common.git',
+    ])
 )
 
 properties(defaultPipelineProperties())
 
 pipeline {
-  agent {
-    node {
-      label 'base'
-    }
-  }
-
-  environment {
-    NETWORK_OPTS = '--network ci_agent'
-    FAILURE_EMAIL_RECIPIENTS='smokybeans@zextras.com'
-  }
-
-  options {
-    buildDiscarder(logRotator(numToKeepStr: '5'))
-    skipDefaultCheckout()
-    timeout(time: 1, unit: 'HOURS')
-  }
-
-  stages {
-    stage('Setup') {
-      steps {
-        checkout scm
-        script {
-          gitMetadata()
+    agent {
+        node {
+            label 'zextras-v1'
         }
-      }
     }
 
-    // stage('Stashing for packaging') {
-    //   steps {
-    //     stash includes: '**', name: 'project', useDefaultExcludes: false
-    //   }
-    // }
-
-    stage('Build deb/rpm') {
-      steps {
-        echo 'Building deb/rpm packages'
-        buildStage([
-          rockySinglePkg: true,
-          ubuntuSinglePkg: true,
-        ])
-      }
-      post {
-        failure {
-          script {
-            if ("main".equals(BRANCH_NAME) || "devel".equals(BRANCH_NAME)) {
-              sendFailureEmail(STAGE_NAME)
-            }
-          }
-        }
-      }
+    environment {
+        LC_ALL = 'C.UTF-8'
     }
 
-    stage('Upload artifacts') {
-      tools {
-        jfrog 'jfrog-cli'
-      }
-      steps {
-        uploadStage(
-          packages: yapHelper.resolvePackageNames(),
-          rockySinglePkg: true,
-          ubuntuSinglePkg: true,
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '25'))
+        skipDefaultCheckout()
+        timeout(time: 30, unit: 'MINUTES')
+    }
+
+    parameters {
+        booleanParam(
+            name: 'PREPARE_RELEASE',
+            defaultValue: false,
+            description: 'Check this to prepare a new release (creates pre-release branch and PR)'
         )
-      }
-      post {
-        failure {
-          script {
-            if ("main".equals(BRANCH_NAME) || "devel".equals(BRANCH_NAME)) {
-              sendFailureEmail(STAGE_NAME)
-            }
-          }
-        }
-      }
     }
-  }
-}
 
-void sendFailureEmail(String step) {
-  def commitInfo =sh(
-     script: 'git log -1 --pretty=tformat:\'<ul><li>Revision: %H</li><li>Title: %s</li><li>Author: %ae</li></ul>\'',
-     returnStdout: true
-  )
-  emailext body: """\
-    <b>${step.capitalize()}</b> step has failed on trunk.<br /><br />
-    Last commit info: <br />
-    ${commitInfo}<br /><br />
-    Check the failing build at the <a href=\"${BUILD_URL}\">following link</a><br />
-  """,
-  subject: "[WORKSTREAM COLLABORATION DB TRUNK FAILURE] Trunk ${step} step failure",
-  to: FAILURE_EMAIL_RECIPIENTS
+    stages {
+        stage('Setup') {
+            steps {
+                checkout scm
+                script {
+                    gitMetadata()
+                }
+            }
+        }
+
+        stage('Build deb/rpm') {
+            steps {
+                script {
+                    buildPackages([
+                        pkgbuildPath: 'package/PKGBUILD',
+                        buildStageConfig: [
+                            rockySinglePkg: true,
+                            ubuntuSinglePkg: true
+                        ]
+                    ])
+                }
+            }
+        }
+
+        stage('Upload artifacts') {
+            when {
+                expression { return uploadStage.shouldUpload() }
+            }
+            tools {
+                jfrog 'jfrog-cli'
+            }
+            steps {
+                uploadStage(
+                    packages: yapHelper.resolvePackageNames(),
+                    rockySinglePkg: true,
+                    ubuntuSinglePkg: true
+                )
+            }
+        }
+
+        stage('Prepare Release') {
+            agent {
+                node {
+                    label 'nodejs-v1'
+                }
+            }
+            when {
+                allOf {
+                    branch 'devel'
+                    expression { params.PREPARE_RELEASE == true }
+                    not {
+                        expression {
+                            return env.GIT_COMMIT_MSG.contains('[skip ci]') ||
+                                   env.GIT_COMMIT_MSG.contains('chore(release):')
+                        }
+                    }
+                }
+            }
+            steps {
+                script {
+                    container('nodejs-20') {
+                        prepareRelease(
+                            repoName: 'carbonio-ws-collaboration-db'
+                        )
+                    }
+                }
+            }
+        }
+
+        stage('Tag for release') {
+            when {
+                allOf {
+                    branch 'devel'
+                    expression {
+                        return env.GIT_COMMIT_MSG.contains('chore(release):') &&
+                               env.GIT_COMMIT_MSG.contains('[skip ci]')
+                    }
+                }
+            }
+            steps {
+                script {
+                    tagRelease()
+                }
+            }
+        }
+    }
 }
