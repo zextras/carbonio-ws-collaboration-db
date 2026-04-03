@@ -1,5 +1,5 @@
 [Unit]
-Description=Carbonio Workstream Collaboration database sidecar
+Description=Carbonio WS Collaboration DB Sidecar
 Documentation=https://docs.zextras.com/
 Requires=network-online.target
 After=network-online.target service-discover.service
