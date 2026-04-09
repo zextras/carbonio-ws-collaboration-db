@@ -57,6 +57,18 @@ pipeline {
             }
         }
 
+        stage('Build container images') {
+            steps {
+                buildAndPublishDockerImage(
+                        projectName: 'carbonio-ws-collaboration-db-sidecar',
+                        dockerfile: 'docker/sidecar/Dockerfile',
+                        imageTitle: 'Carbonio Ws Collaboration DB Sidecar',
+                        imageDescription: 'Envoy Sidecar for Carbonio Ws Collaboration DB'
+                )
+            }
+        }
+
+
         stage('Build deb/rpm') {
             steps {
                 script {
