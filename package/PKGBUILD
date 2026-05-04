@@ -1,5 +1,5 @@
 pkgname="carbonio-ws-collaboration-db"
-pkgver="0.2.6"
+pkgver="0.3.0"
 pkgrel="SNAPSHOT"
 pkgdesc="Carbonio Workstream Collaboration DB sidecar"
 maintainer="Zextras <packages@zextras.com>"

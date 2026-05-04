@@ -1,3 +1,9 @@
+## [0.3.0](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.2.6...v0.3.0) (2026-05-04)
+
+### Features
+
+* systemd hardening and service-discover.target orchestration ([#43](https://github.com/zextras/carbonio-ws-collaboration-db/issues/43)) ([b645a45](https://github.com/zextras/carbonio-ws-collaboration-db/commit/b645a45eda50e4e51ac4da1c330fd1322737c05e))
+
 ## [0.2.6](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.2.5...v0.2.6) (2026-02-23)
 
 ## [](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.2.5...v) (2026-01-08)
