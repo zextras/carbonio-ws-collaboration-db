@@ -75,9 +75,7 @@ pipeline {
                     buildPackages([
                         pkgbuildPath: 'package/PKGBUILD',
                         buildStageConfig: [
-                            buildFlags: ' -ds ',
-                            rockySinglePkg: true,
-                            ubuntuSinglePkg: true
+                            buildFlags: ' -ds '
                         ]
                     ])
                 }
@@ -93,9 +91,7 @@ pipeline {
             }
             steps {
                 uploadStage(
-                    packages: yapHelper.resolvePackageNames(),
-                    rockySinglePkg: true,
-                    ubuntuSinglePkg: true
+                    packages: yapHelper.resolvePackageNames()
                 )
             }
         }
