@@ -1,3 +1,14 @@
+## [0.4.0](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.3.1...v0.4.0) (2026-05-25)
+
+### Features
+
+* **packaging:** use arch=('any') for architecture-independent package ([#55](https://github.com/zextras/carbonio-ws-collaboration-db/issues/55)) ([8c21b7b](https://github.com/zextras/carbonio-ws-collaboration-db/commit/8c21b7b382c8cfb46c2480400c1884be818ea4bc))
+
+### Bug Fixes
+
+* **deps:** add explicit service-discover-base dependency ([#58](https://github.com/zextras/carbonio-ws-collaboration-db/issues/58)) ([b0ed6c6](https://github.com/zextras/carbonio-ws-collaboration-db/commit/b0ed6c6f0a78388eb0c00e64426959936ba18bce))
+* **sidecar:** increase startup timeout for RHEL8 compatibility ([#57](https://github.com/zextras/carbonio-ws-collaboration-db/issues/57)) ([00c6178](https://github.com/zextras/carbonio-ws-collaboration-db/commit/00c6178f7859f8ae53145e1ee53bd9c399a47737))
+
 ## [0.3.1](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.3.0...v0.3.1) (2026-05-06)
 
 ### Bug Fixes
