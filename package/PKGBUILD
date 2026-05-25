@@ -13,6 +13,7 @@ depends=(
   "jq"
   "pending-setups"
   "service-discover"
+  "service-discover-base"
 )
 backup=(
   "etc/zextras/service-discover/${pkgname}.hcl"
