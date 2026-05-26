@@ -1,3 +1,9 @@
+## [0.4.1](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.4.0...v0.4.1) (2026-05-26)
+
+### Bug Fixes
+
+* use dt3-migration branch for jenkins-lib-common ([#61](https://github.com/zextras/carbonio-ws-collaboration-db/issues/61)) ([179ebdf](https://github.com/zextras/carbonio-ws-collaboration-db/commit/179ebdf0de1a55ec3ab21bf24f715b83e3e59d13))
+
 <!--
 SPDX-FileCopyrightText: 2026 Zextras <https://www.zextras.com>
 
