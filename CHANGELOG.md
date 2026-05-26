@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Zextras <https://www.zextras.com>
+
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 ## [0.4.0](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.3.1...v0.4.0) (2026-05-25)
 
 ### Features
