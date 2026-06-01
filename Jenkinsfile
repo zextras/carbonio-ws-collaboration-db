@@ -20,6 +20,7 @@ dt3_pipeline(
     docker: [[
         dockerfile: 'docker/sidecar/Dockerfile',
         imageName: 'carbonio-ws-collaboration-db-sidecar',
+        platforms: ['linux/amd64', 'linux/arm64'] as Set,
         title: 'Carbonio Ws Collaboration DB Sidecar',
         description: 'Envoy Sidecar for Carbonio Ws Collaboration DB',
     ]],
