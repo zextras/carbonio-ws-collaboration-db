@@ -1,3 +1,9 @@
+## [0.5.0](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.4.1...v0.5.0) (2026-06-04)
+
+### Features
+
+* **ci:** [IN-951] add arm64 platform to db sidecar (no-QEMU psql/openssl cross-download) ([#62](https://github.com/zextras/carbonio-ws-collaboration-db/issues/62)) ([2818bfa](https://github.com/zextras/carbonio-ws-collaboration-db/commit/2818bfa9c7e98db2b3770b2008df86f015bdc64a))
+
 ## [0.4.1](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.4.0...v0.4.1) (2026-05-26)
 
 ### Bug Fixes
