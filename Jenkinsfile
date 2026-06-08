@@ -15,6 +15,8 @@ dt3_pipeline(
     repoName: 'carbonio-ws-collaboration-db',
     packaging: [
         buildFlags: '-ds',
+        rockySinglePkg: false,
+        ubuntuSinglePkg: false,
     ],
     docker: [[
         dockerfile: 'docker/sidecar/Dockerfile',
