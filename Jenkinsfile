@@ -14,7 +14,6 @@ library(
 dt3_pipeline(
     repoName: 'carbonio-ws-collaboration-db',
     packaging: [
-        pkgbuildPath: 'package/PKGBUILD',
         buildFlags: '-ds',
     ],
     docker: [[
