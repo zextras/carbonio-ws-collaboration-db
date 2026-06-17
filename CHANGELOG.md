@@ -1,3 +1,9 @@
+## [0.5.1](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.5.0...v0.5.1) (2026-06-08)
+
+### Bug Fixes
+
+* **ci:** build packages for all distros ([#68](https://github.com/zextras/carbonio-ws-collaboration-db/issues/68)) ([4487a38](https://github.com/zextras/carbonio-ws-collaboration-db/commit/4487a38843eed86a6ccc4fad98d4c97543834701))
+
 ## [0.5.0](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.4.1...v0.5.0) (2026-06-04)
 
 ### Features
