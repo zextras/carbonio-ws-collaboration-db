@@ -1,3 +1,9 @@
+## [0.6.0](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.5.2...v0.6.0) (2026-06-23)
+
+### Features
+
+* migrate to dt3-pipeline ([#54](https://github.com/zextras/carbonio-ws-collaboration-db/issues/54)) ([74ff8ca](https://github.com/zextras/carbonio-ws-collaboration-db/commit/74ff8ca3a64f9fcf5cf973f76e9467d994a3f4a7))
+
 ## [0.5.1](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.5.0...v0.5.1) (2026-06-08)
 
 ### Bug Fixes
