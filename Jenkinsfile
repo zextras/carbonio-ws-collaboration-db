@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 library(
-    identifier: 'jenkins-lib-common@dt3-migration',
+    identifier: 'jenkins-lib-common@dt3-pipeline',
     retriever: modernSCM([
         $class: 'GitSCMSource',
         credentialsId: 'jenkins-integration-with-github-account',
@@ -14,7 +14,6 @@ library(
 dt3_pipeline(
     repoName: 'carbonio-ws-collaboration-db',
     packaging: [
-        pkgbuildPath: 'package/PKGBUILD',
         buildFlags: '-ds',
         rockySinglePkg: false,
         ubuntuSinglePkg: false,
@@ -27,5 +26,4 @@ dt3_pipeline(
         description: 'Envoy Sidecar for Carbonio Ws Collaboration DB',
     ]],
     reuse: [projectType: 'CE'],
-    gitleaks: true,
 )

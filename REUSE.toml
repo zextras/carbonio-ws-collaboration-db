@@ -3,8 +3,48 @@ SPDX-PackageName = "carbonio-ws-collaboration-db"
 SPDX-PackageSupplier = "Zextras <packages@zextras.com>"
 SPDX-PackageDownloadLocation = "https://github.com/Zextras/carbonio-ws-collaboration-db"
 
+# CI-generated changelog (must not be edited / annotated).
 [[annotations]]
-path = "**"
+path = "CHANGELOG.md"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Zextras <https://www.zextras.com>"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+# Full AGPL-3.0 license text shipped as COPYING.
+[[annotations]]
+path = "COPYING"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Zextras <https://www.zextras.com>"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+# Empty placeholder for third-party notices.
+[[annotations]]
+path = "THIRDPARTIES"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Zextras <https://www.zextras.com>"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+# JSON config files cannot carry comment headers.
+[[annotations]]
+path = [
+    ".github/renovate.json",
+    ".releaserc.json",
+    "yap.json",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Zextras <https://www.zextras.com>"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+# Packaging files (immutable in CI; never annotated in place).
+[[annotations]]
+path = [
+    "package/PKGBUILD",
+    "package/carbonio-ws-collaboration-db-sidecar-legacy.service",
+    "package/carbonio-ws-collaboration-db-sidecar.service",
+    "package/intentions.json",
+    "package/policies.json",
+    "package/service-protocol.json",
+]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Zextras <https://www.zextras.com>"
 SPDX-License-Identifier = "AGPL-3.0-only"
