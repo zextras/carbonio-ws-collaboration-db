@@ -1,3 +1,9 @@
+## [0.6.16](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.15...v0.6.16) (2026-09-01)
+
+### Bug Fixes
+
+* **release:** update semantic-release branch to main ([#87](https://github.com/zextras/carbonio-ws-collaboration-db/issues/87)) ([a4922cb](https://github.com/zextras/carbonio-ws-collaboration-db/commit/a4922cb62db9d6470c909d227d7724d862028b67))
+
 ## [0.6.15](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.14...v0.6.15) (2026-08-27)
 
 ## [0.6.14](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.13...v0.6.14) (2026-08-26)
