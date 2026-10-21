@@ -1,3 +1,5 @@
+## [0.6.35](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.34...v0.6.35) (2026-10-21)
+
 ## [0.6.34](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.33...v0.6.34) (2026-10-21)
 
 ## [0.6.33](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.32...v0.6.33) (2026-10-16)
