@@ -5,7 +5,7 @@ SPDX-PackageDownloadLocation = "https://github.com/Zextras/carbonio-ws-collabora
 
 # CI-generated changelog (must not be edited / annotated).
 [[annotations]]
-path = "CHANGELOG.md"
+path = ["CHANGELOG.md", "README.md"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Zextras <https://www.zextras.com>"
 SPDX-License-Identifier = "AGPL-3.0-only"
