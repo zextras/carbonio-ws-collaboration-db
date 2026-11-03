@@ -1,3 +1,9 @@
+## [0.6.40](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.39...v0.6.40) (2026-11-03)
+
+### Bug Fixes
+
+* **setup:** reuse a deterministic Consul token per node - CO-3612 ([#109](https://github.com/zextras/carbonio-ws-collaboration-db/issues/109)) ([8de66c9](https://github.com/zextras/carbonio-ws-collaboration-db/commit/8de66c9fa2800717054758b5d2a0d25a8f4dd5bc))
+
 ## [0.6.39](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.38...v0.6.39) (2026-11-01)
 
 ## [0.6.38](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.37...v0.6.38) (2026-10-29)
