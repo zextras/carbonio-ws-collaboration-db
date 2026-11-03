@@ -48,18 +48,15 @@ consul config write /etc/carbonio/ws-collaboration-db/service-discover/service-p
 # Allow other services to contact this service
 consul config write /etc/carbonio/ws-collaboration-db/service-discover/intentions.json
 
-if [[ ! -f "/etc/carbonio/ws-collaboration-db/service-discover/token" ]]; then
-    # Create the token
-    consul acl token create -format json -policy-name "${POLICY_NAME}" -description "Token for carbonio-ws-collaboration-db/$(hostname -A)" |
-      jq -r '.SecretID' > /etc/carbonio/ws-collaboration-db/service-discover/token;
-    chown carbonio-ws-collaboration-db:carbonio-ws-collaboration-db /etc/carbonio/ws-collaboration-db/service-discover/token
-    chmod 0600 /etc/carbonio/ws-collaboration-db/service-discover/token
-fi
+service-discover service-token ensure --service carbonio-ws-collaboration-db --policy "${POLICY_NAME}" \
+  --token-file /etc/carbonio/ws-collaboration-db/service-discover/token --owner carbonio-ws-collaboration-db
 
 consul reload
 
+systemctl restart carbonio-ws-collaboration-db-sidecar.service
+
+service-discover service-token prune-legacy --service carbonio-ws-collaboration-db --policy "${POLICY_NAME}"
+
 # Limit token visibility as much as possible
 export -n CONSUL_HTTP_TOKEN
-
-systemctl restart carbonio-ws-collaboration-db-sidecar.service
 trap - exit
