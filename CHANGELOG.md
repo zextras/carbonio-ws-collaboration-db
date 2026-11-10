@@ -1,3 +1,9 @@
+## [0.6.41](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.40...v0.6.41) (2026-11-10)
+
+### Bug Fixes
+
+* **docker:** create the carbonio-ws-collaboration-db sidecar system user ([#114](https://github.com/zextras/carbonio-ws-collaboration-db/issues/114)) ([5e1b237](https://github.com/zextras/carbonio-ws-collaboration-db/commit/5e1b237b5ea6aa3c895ddb9bb00c2f8961f3270c))
+
 ## [0.6.40](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.39...v0.6.40) (2026-11-03)
 
 ### Bug Fixes
