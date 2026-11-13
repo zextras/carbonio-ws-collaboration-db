@@ -1,3 +1,5 @@
+## [0.6.42](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.41...v0.6.42) (2026-11-13)
+
 ## [0.6.41](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.40...v0.6.41) (2026-11-10)
 
 ### Bug Fixes
