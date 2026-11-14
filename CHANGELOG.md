@@ -1,3 +1,9 @@
+## [0.6.43](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.42...v0.6.43) (2026-11-14)
+
+### Bug Fixes
+
+* fail the bootstrap when Consul KV can't be written (CO-4748) ([#116](https://github.com/zextras/carbonio-ws-collaboration-db/issues/116)) ([3d666db](https://github.com/zextras/carbonio-ws-collaboration-db/commit/3d666db14fff5b1cec95d095116c5eb06f69190e))
+
 ## [0.6.42](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.41...v0.6.42) (2026-11-13)
 
 ## [0.6.41](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.40...v0.6.41) (2026-11-10)
