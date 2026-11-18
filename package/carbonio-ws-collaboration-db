@@ -53,6 +53,8 @@ service-discover service-token ensure --service carbonio-ws-collaboration-db --p
 
 consul reload
 
+# Clear a start limit hit while the token or the registration was missing
+systemctl reset-failed carbonio-ws-collaboration-db-sidecar.service || true
 systemctl restart carbonio-ws-collaboration-db-sidecar.service
 
 service-discover service-token prune-legacy --service carbonio-ws-collaboration-db --policy "${POLICY_NAME}"
