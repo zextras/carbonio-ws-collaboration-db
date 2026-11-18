@@ -5,6 +5,11 @@ Requires=network-online.target
 After=network-online.target service-discover.service
 PartOf=service-discover.target
 
+# The token is written by the pending setup ("carbonio-ws-collaboration-db setup")
+# once Consul is bootstrapped. Without it the sidecar cannot start: skip it
+# instead of failing and exhausting its start limit before the setup runs.
+ConditionPathExists=/etc/carbonio/ws-collaboration-db/service-discover/token
+
 [Service]
 User=carbonio-ws-collaboration-db
 Type=notify
