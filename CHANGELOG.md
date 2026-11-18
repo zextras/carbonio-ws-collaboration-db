@@ -1,3 +1,9 @@
+## [0.6.45](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.44...v0.6.45) (2026-11-18)
+
+### Bug Fixes
+
+* [CO-4798] skip the ws-collaboration-db sidecar until its token exists ([#118](https://github.com/zextras/carbonio-ws-collaboration-db/issues/118)) ([551bc1f](https://github.com/zextras/carbonio-ws-collaboration-db/commit/551bc1fc333a38e63dd325be9c0f0ad960291d15))
+
 ## [0.6.44](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.43...v0.6.44) (2026-11-18)
 
 ## [0.6.43](https://github.com/zextras/carbonio-ws-collaboration-db/compare/v0.6.42...v0.6.43) (2026-11-14)
