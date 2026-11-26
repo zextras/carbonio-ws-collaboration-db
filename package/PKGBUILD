@@ -15,9 +15,6 @@ depends=(
   "service-discover"
   "service-discover-base"
 )
-backup=(
-  "etc/zextras/service-discover/${pkgname}.hcl"
-)
 source=(
   "111-${pkgname}-setup.sh"
   "${pkgname}"
