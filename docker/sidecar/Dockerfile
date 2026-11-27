@@ -42,6 +42,12 @@ RUN set -eux; \
     cp -a /x/usr/lib/${TRIPLET}/libsasl2.so.*       "/out/usr/lib/${TRIPLET}/"; \
     cp -a /x/lib/${TRIPLET}/libreadline.so.*        "/out/usr/lib/${TRIPLET}/"
 
+FROM --platform=$BUILDPLATFORM docker.io/library/alpine:3.20 AS hcl
+COPY package/carbonio-ws-collaboration-db-template.hcl /carbonio-ws-collaboration-db-template.hcl
+RUN sed -E 's/\{\{ or \(env "[A-Z0-9_]+"\) "([^"]*)" \}\}/\1/g' \
+    /carbonio-ws-collaboration-db-template.hcl > /carbonio-ws-collaboration-db.hcl \
+    && ! grep -q '{{' /carbonio-ws-collaboration-db.hcl
+
 FROM registry.dev.zextras.com/dev/carbonio-sidecar:main
 
 RUN useradd -r -U carbonio-ws-collaboration-db
@@ -51,7 +57,7 @@ RUN useradd -r -U carbonio-ws-collaboration-db
 COPY --from=pgclient /out /
 
 # Service registration
-COPY package/carbonio-ws-collaboration-db.hcl /consul/config/
+COPY --from=hcl /carbonio-ws-collaboration-db.hcl /consul/config/
 
 # Setup files at the path the setup script expects
 COPY package/service-protocol.json /etc/carbonio/ws-collaboration-db/service-discover/

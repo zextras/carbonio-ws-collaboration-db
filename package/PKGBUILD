@@ -14,11 +14,13 @@ depends=(
   "pending-setups"
   "service-discover"
   "service-discover-base"
+  "service-discover-template"
 )
 source=(
   "111-${pkgname}-setup.sh"
   "${pkgname}"
-  "${pkgname}.hcl"
+  "${pkgname}-template.hcl"
+  "${pkgname}-hcl"
   "${pkgname}-bootstrap"
   "${pkgname}-sidecar.service"
   "${pkgname}-sidecar-legacy.service"
@@ -28,8 +30,9 @@ source=(
 )
 sha256sums=(
   '0ce7138ea81d19fabe18b24150fa3240ce0456eda4105d3b1a76598ecc0f32dd'
-  '5dd20e5baaa0e8fa2e161327571f3f414431fb71c0130976f6a37e61bfc1c1aa'
-  '50da5e81599445ef22296e51cade1328ba6f4d39f9ef937c9ba791568392b73c'
+  '7dc9f32ccf726213d60cbaef349677da270114d6f0acbee9f72e9f982ca98f11'
+  '765c39fa48b85f81cfbc5b4e2cf7dbb8c5279e908ea5735ec6230f2a7099f811'
+  '28b75d9cbd31d711b1be3c391529e0c9f484735f0018625476d97b4c1aa2ec95'
   '3f487d64912cf2bbe556d8534369fb3ae5b13d6a1598e62788a9bac2e16d53ce'
   '5a772e42c5ccb4aee74f764e9eedbbf39b191936c0d3d335387cdc0c86d61ba1'
   '1062ea876c0c711a921dcd3284f007f1057ac98e917bac1e5a3028cde65f78c4'
@@ -43,8 +46,10 @@ _package_common() {
     "${pkgdir}/etc/zextras/pending-setups.d/111-${pkgname}-setup.sh"
   install -Dm755 "${srcdir}/${pkgname}" \
     "${pkgdir}/usr/bin/${pkgname}"
-  install -Dm644 "${srcdir}/${pkgname}.hcl" \
-    "${pkgdir}/etc/zextras/service-discover/${pkgname}.hcl"
+  install -Dm644 "${srcdir}/${pkgname}-template.hcl" \
+    "${pkgdir}/etc/zextras/service-discover/templates/${pkgname}-template.hcl"
+  install -Dm755 "${srcdir}/${pkgname}-hcl" \
+    "${pkgdir}/usr/bin/${pkgname}-hcl"
   install -Dm755 "${srcdir}/${pkgname}-bootstrap" \
     "${pkgdir}/usr/bin/${pkgname}-bootstrap"
   install -Dm644 "${srcdir}/intentions.json" \
@@ -82,10 +87,20 @@ postinst() {
     systemctl enable carbonio-ws-collaboration-db-sidecar.service >/dev/null 2>&1 || :
   fi
 
+  if [ "$1" = "configure" ]; then
+    carbonio-ws-collaboration-db-hcl migrate || :
+    carbonio-ws-collaboration-db-hcl render || echo "WARNING: hcl render failed, run carbonio-ws-collaboration-db setup"
+  fi
+
   echo "============================================================"
   echo "Carbonio Workstream Collaboration DB installed successfully!"
   echo "You must run pending-setups to configure it correctly.      "
   echo "============================================================"
+}
+
+posttrans() {
+  carbonio-ws-collaboration-db-hcl migrate || :
+  carbonio-ws-collaboration-db-hcl render || echo "WARNING: hcl render failed, run carbonio-ws-collaboration-db setup"
 }
 
 prerm() {
@@ -97,6 +112,10 @@ prerm() {
 
 postrm() {
   rm -f /etc/carbonio/ws-collaboration/service-discover/token
+  rm -f /etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl
+  if [ "$1" = "purge" ]; then
+    rm -f /etc/zextras/service-discover/carbonio-ws-collaboration-db.env /etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl.bak
+  fi
   if [ -d /run/systemd/system ]; then
     systemctl daemon-reload >/dev/null 2>&1 || :
   fi
