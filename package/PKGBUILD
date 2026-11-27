@@ -30,9 +30,9 @@ source=(
 )
 sha256sums=(
   '0ce7138ea81d19fabe18b24150fa3240ce0456eda4105d3b1a76598ecc0f32dd'
-  '7dc9f32ccf726213d60cbaef349677da270114d6f0acbee9f72e9f982ca98f11'
+  '3e0602be12e0edfa3802d78c531c48dd91d7ed5d5054bcd96acac9904d5d6ca8'
   '6ef63e9e7d938c55909e79f65541290a765cb6f96ff3772b12027293f8c7657b'
-  '7d114d61fa60190ef3d27d510e4405f1bc176721b0b1a342fc456e4221c3adf0'
+  'a09dbb2cc4c5f92693da81358a7d477d068f6c3e143ff8c1e2ab3a78d17783f7'
   '3f487d64912cf2bbe556d8534369fb3ae5b13d6a1598e62788a9bac2e16d53ce'
   '5a772e42c5ccb4aee74f764e9eedbbf39b191936c0d3d335387cdc0c86d61ba1'
   '1062ea876c0c711a921dcd3284f007f1057ac98e917bac1e5a3028cde65f78c4'
@@ -88,7 +88,6 @@ postinst() {
   fi
 
   if [ "$1" = "configure" ]; then
-    carbonio-ws-collaboration-db-hcl migrate || :
     carbonio-ws-collaboration-db-hcl render || echo "WARNING: hcl render failed, run carbonio-ws-collaboration-db setup"
   fi
 
@@ -99,7 +98,6 @@ postinst() {
 }
 
 posttrans() {
-  carbonio-ws-collaboration-db-hcl migrate || :
   carbonio-ws-collaboration-db-hcl render || echo "WARNING: hcl render failed, run carbonio-ws-collaboration-db setup"
 }
 
