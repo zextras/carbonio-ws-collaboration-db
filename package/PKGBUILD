@@ -20,7 +20,6 @@ source=(
   "111-${pkgname}-setup.sh"
   "${pkgname}"
   "${pkgname}-template.hcl"
-  "${pkgname}-hcl"
   "${pkgname}-bootstrap"
   "${pkgname}-sidecar.service"
   "${pkgname}-sidecar-legacy.service"
@@ -30,9 +29,8 @@ source=(
 )
 sha256sums=(
   '0ce7138ea81d19fabe18b24150fa3240ce0456eda4105d3b1a76598ecc0f32dd'
-  '3e0602be12e0edfa3802d78c531c48dd91d7ed5d5054bcd96acac9904d5d6ca8'
-  '6ef63e9e7d938c55909e79f65541290a765cb6f96ff3772b12027293f8c7657b'
-  'ac8de2a7831e7ccd1b6e89f98fdaf8bcc0d31caad03473b323fb8422100bfb88'
+  '2cd481cd871b42af38d6c2e9fa3bd95eb250dfe20410e958c2ad8f5bf1016f39'
+  'f77051486f18a6aef6b3be435b3f66f64b026a41180714d8f4b20bd7c1dc1642'
   '3f487d64912cf2bbe556d8534369fb3ae5b13d6a1598e62788a9bac2e16d53ce'
   '5a772e42c5ccb4aee74f764e9eedbbf39b191936c0d3d335387cdc0c86d61ba1'
   '1062ea876c0c711a921dcd3284f007f1057ac98e917bac1e5a3028cde65f78c4'
@@ -48,8 +46,6 @@ _package_common() {
     "${pkgdir}/usr/bin/${pkgname}"
   install -Dm644 "${srcdir}/${pkgname}-template.hcl" \
     "${pkgdir}/etc/zextras/service-discover/templates/${pkgname}-template.hcl"
-  install -Dm755 "${srcdir}/${pkgname}-hcl" \
-    "${pkgdir}/usr/bin/${pkgname}-hcl"
   install -Dm755 "${srcdir}/${pkgname}-bootstrap" \
     "${pkgdir}/usr/bin/${pkgname}-bootstrap"
   install -Dm644 "${srcdir}/intentions.json" \
@@ -88,7 +84,11 @@ postinst() {
   fi
 
   if [ "$1" = "configure" ]; then
-    carbonio-ws-collaboration-db-hcl render || echo "WARNING: hcl render failed, run carbonio-ws-collaboration-db setup"
+    env -i PATH=/usr/bin:/bin bash -c 'set -a; [ -r "$1" ] && . "$1"; exec consul-template -once -template "$2:$3"' _ \
+      /etc/zextras/service-discover/carbonio-ws-collaboration-db.env \
+      /etc/zextras/service-discover/templates/carbonio-ws-collaboration-db-template.hcl \
+      /etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl > /dev/null \
+      || echo "WARNING: cannot render /etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl, run carbonio-ws-collaboration-db setup"
   fi
 
   echo "============================================================"
@@ -98,7 +98,11 @@ postinst() {
 }
 
 posttrans() {
-  carbonio-ws-collaboration-db-hcl render || echo "WARNING: hcl render failed, run carbonio-ws-collaboration-db setup"
+  env -i PATH=/usr/bin:/bin bash -c 'set -a; [ -r "$1" ] && . "$1"; exec consul-template -once -template "$2:$3"' _ \
+    /etc/zextras/service-discover/carbonio-ws-collaboration-db.env \
+    /etc/zextras/service-discover/templates/carbonio-ws-collaboration-db-template.hcl \
+    /etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl > /dev/null \
+    || echo "WARNING: cannot render /etc/zextras/service-discover/carbonio-ws-collaboration-db.hcl, run carbonio-ws-collaboration-db setup"
 }
 
 prerm() {
