@@ -6,6 +6,8 @@
 
 set -e
 
+consul-template -once -template '/consul/templates/carbonio-ws-collaboration-db-template.hcl:/consul/config/carbonio-ws-collaboration-db.hcl'
+
 echo '[sidecar] Waiting for consul agent...'
 until consul members >/dev/null 2>&1; do sleep 1; done
 echo '[sidecar] Consul agent ready.'
